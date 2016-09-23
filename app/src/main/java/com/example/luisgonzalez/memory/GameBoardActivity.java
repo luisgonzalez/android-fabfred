@@ -5,26 +5,27 @@ import android.graphics.PorterDuff;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
+import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.GridLayout;
-import android.widget.GridLayout.LayoutParams;
+import android.widget.GridView;
+
+import com.example.luisgonzalez.memory.util.CellAdapter;
 
 import java.util.ArrayList;
 
 public class GameBoardActivity extends AppCompatActivity {
-    static final String CURRENT_POSITION = "CurrentPosition";
+    static final String CURRENT_POSITION = "CURRENT_POSITION";
     static final String SEQUENCE = "SEQUENCE";
 
     ArrayList<Button> _buttons = new ArrayList<>();
-    ArrayList<Button> _sequence = new ArrayList<>();
+    ArrayList<Integer> _sequence = new ArrayList<>();
     int _currentPosition = 0;
     int _width = 3;
-    int _height = 4;
+    int _height = 3;
     int _delay = 400;
     int _animationDelay = 100;
     Animation _animation;
@@ -41,7 +42,7 @@ public class GameBoardActivity extends AppCompatActivity {
 
         if (savedInstanceState != null) {
             _currentPosition = savedInstanceState.getInt(CURRENT_POSITION);
-            _sequence = transformIntegerSequenceToButtonSequence(savedInstanceState.getIntegerArrayList(SEQUENCE));
+            _sequence = savedInstanceState.getIntegerArrayList(SEQUENCE);
             updateResetButtonText();
             setEnabled(true);
         }
@@ -56,19 +57,8 @@ public class GameBoardActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle savedState){
         savedState.putInt(CURRENT_POSITION, _currentPosition);
-        savedState.putIntegerArrayList(SEQUENCE, transformButtonSequenceToIntegerSequence(_sequence));
+        savedState.putIntegerArrayList(SEQUENCE, _sequence);
     }
-
-    View.OnClickListener _buttonListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            final Button button = (Button) view;
-
-            highlight(button);
-
-            resolve(button);
-        }
-    };
 
     View.OnClickListener _buttonStartListener = new View.OnClickListener() {
         @Override
@@ -81,38 +71,20 @@ public class GameBoardActivity extends AppCompatActivity {
         }
     };
 
-    protected ArrayList<Button> transformIntegerSequenceToButtonSequence(ArrayList<Integer> list){
-        ArrayList<Button> result = new ArrayList<>();
-        for (Integer index : list) {
-            result.add(_buttons.get(index));
-        }
-        return result;
-    }
-
-    protected ArrayList<Integer> transformButtonSequenceToIntegerSequence(ArrayList<Button> list){
-        ArrayList<Integer> result = new ArrayList<>();
-        for (Button button : list) {
-            result.add(_buttons.indexOf(button));
-        }
-        return result;
-    }
-
-    protected int getButtonPosition(int row, int column) {
-        return row * _width + column;
-    }
-
     protected void walkSequence() {
         setEnabled(false);
 
         Handler handler = new Handler();
         int index = 0;
         final int lastIndex = _sequence.size() - 1;
-        for (final Button button : _sequence) {
+        for (final Integer buttonPosition : _sequence) {
+            GridView gridView = (GridView)findViewById(R.id.GridViewBoard);
+            final View cell = gridView.getChildAt(buttonPosition);
             final int i = index++;
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    highlight(button);
+                    highlight(cell);
 
                     if (i == lastIndex) {
                         setEnabled(true);
@@ -138,12 +110,14 @@ public class GameBoardActivity extends AppCompatActivity {
         }
     }
 
-    protected void highlight(Button button){
-        button.startAnimation(_animation);
+    protected void highlight(View cell){
+        if (cell != null) {
+            cell.startAnimation(_animation);
+        }
     }
 
-    protected void resolve(Button button) {
-        if (_sequence.get(_currentPosition) == button) {
+    protected void resolve(int buttonPosition) {
+        if (_sequence.get(_currentPosition) == buttonPosition) {
             _currentPosition++;
             if (_currentPosition == _sequence.size()) {
                 _currentPosition = 0;
@@ -158,7 +132,7 @@ public class GameBoardActivity extends AppCompatActivity {
     }
 
     protected void addElement(){
-        _sequence.add(_buttons.get((int)Math.floor(Math.random() * _width * _height)));
+        _sequence.add((int)Math.floor(Math.random() * _width * _height));
     }
 
     protected void initializeSequence() {
@@ -168,43 +142,18 @@ public class GameBoardActivity extends AppCompatActivity {
     }
 
     protected void createButtons() {
-        destroyButtons();
-        int totalButtons = _width * _height;
-
-        GridLayout gridLayout = (GridLayout) findViewById(R.id.ButtonGridLayout);
-        gridLayout.setColumnCount(_width);
-        gridLayout.setRowCount(_height);
-
-        for (int column = 0; column < _width; column++) {
-            for (int row = 0; row < _height; row++) {
-                LayoutParams params = new LayoutParams();
-
-                params.setGravity(Gravity.FILL);
-                params.columnSpec = GridLayout.spec(column, 1.0f);
-                params.rowSpec = GridLayout.spec(row, 1.0f);
-
-                Button button = new Button(this);
-                button.setLayoutParams(params);
-                button.setText(column + " " + row);
-                button.setTextColor(0x00FFFFFF);
-                button.setPadding(0, 0, 0, 0);
-
-                int buttonPosition = getButtonPosition(row, column);
-                int color = Color.HSVToColor(new float[]{ buttonPosition * (360 / totalButtons) % 360, 0.5f, 0.5f});
-                button.setBackgroundColor(color);
-
-                _buttons.add(button);
-                gridLayout.addView(button);
-                button.setOnClickListener(_buttonListener);
+        GridView gridView = (GridView)findViewById(R.id.GridViewBoard);
+        CellAdapter adapter = new CellAdapter(this, _height, _width);
+        gridView.setNumColumns(_width);
+        gridView.setAdapter(adapter);
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                highlight(view);
+                resolve(i);
             }
-        }
-    }
+        });
 
-    protected void destroyButtons() {
-        GridLayout gridLayout = (GridLayout) findViewById(R.id.ButtonGridLayout);
 
-        for (Button button : _buttons) {
-            gridLayout.removeView(button);
-        }
     }
 }
