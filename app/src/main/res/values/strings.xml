@@ -1,4 +1,26 @@
 <resources>
     <string name="app_name">Memory</string>
-    <string name="title_activity_configuration">ConfigurationActivity</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- Strings related to Settings -->
+
+    <!-- Example General settings -->
+    <string name="pref_header_general">General</string>
+
+    <string name="pref_game_speed">Game Speed</string>
+    <string-array name="pref_game_speed_options">
+        <item>Slow</item>
+        <item>Normal</item>
+        <item>Fast</item>
+    </string-array>
+
+    <string name="pref_difficulty">Difficulty</string>
+    <string-array name="pref_difficulty_options">
+        <item>Very Easy</item>
+        <item>Easy</item>
+        <item>Normal</item>
+        <item>Hard</item>
+        <item>Very Hard</item>
+    </string-array>
+
 </resources>
