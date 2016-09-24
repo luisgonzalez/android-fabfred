@@ -27,7 +27,7 @@ public class GameBoardActivity extends AppCompatActivity {
     static final String CURRENT_POSITION = "CURRENT_POSITION";
     static final String SEQUENCE = "SEQUENCE";
     static final String[] SPEEDS = new String[]{"Slow", "Normal", "Fast"};
-    static final String[] DIFFICULTIES = new String[]{"Very Easy", "Easy", "Normal", "Hard", "Very Hard"};
+    static final String[] BOARD_SIZES = new String[]{"Very Small", "Small", "Normal", "Large", "Very Large", "Huge"};
 
     ArrayList<Integer> _sequence = new ArrayList<>();
     int _currentPosition = 0;
@@ -106,9 +106,9 @@ public class GameBoardActivity extends AppCompatActivity {
         SharedPreferences defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         String gameSpeed = defaultSharedPreferences.getString("game_speed", "Normal");
-        String difficulty = defaultSharedPreferences.getString("difficulty", "Normal");
+        String boardSize = defaultSharedPreferences.getString("board_size", "Normal");
 
-        switch (Arrays.asList(DIFFICULTIES).indexOf(difficulty)) {
+        switch (Arrays.asList(BOARD_SIZES).indexOf(boardSize)) {
             case 1:
                 _width = 3;
                 _height = 4;
@@ -125,6 +125,10 @@ public class GameBoardActivity extends AppCompatActivity {
                 _width = 5;
                 _height = 5;
                 break;
+            case 5:
+                _width = 8;
+                _height = 8;
+                break;
             default:
                 _width = 3;
                 _height = 3;
@@ -133,15 +137,15 @@ public class GameBoardActivity extends AppCompatActivity {
         switch (Arrays.asList(SPEEDS).indexOf(gameSpeed)) {
             case 0:
                 _delay = 600;
-                _animationDelay = 200;
+                _animationDelay = 150;
                 break;
             case 2:
                 _delay = 200;
-                _animationDelay = 50;
+                _animationDelay = 25;
                 break;
             default:
                 _delay = 400;
-                _animationDelay = 150;
+                _animationDelay = 100;
         }
     }
 

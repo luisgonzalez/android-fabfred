@@ -14,13 +14,14 @@
         <item>Fast</item>
     </string-array>
 
-    <string name="pref_difficulty">Difficulty</string>
-    <string-array name="pref_difficulty_options">
-        <item>Very Easy</item>
-        <item>Easy</item>
+    <string name="pref_difficulty">Board Size</string>
+    <string-array name="pref_board_size_options">
+        <item>Very Small</item>
+        <item>Small</item>
         <item>Normal</item>
-        <item>Hard</item>
-        <item>Very Hard</item>
+        <item>Large</item>
+        <item>Very Large</item>
+        <item>Huge</item>
     </string-array>
 
 </resources>

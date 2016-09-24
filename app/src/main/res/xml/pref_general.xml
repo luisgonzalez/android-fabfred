@@ -2,9 +2,9 @@
 
     <ListPreference
         android:defaultValue="Normal"
-        android:entries="@array/pref_difficulty_options"
-        android:entryValues="@array/pref_difficulty_options"
-        android:key="difficulty"
+        android:entries="@array/pref_board_size_options"
+        android:entryValues="@array/pref_board_size_options"
+        android:key="board_size"
         android:negativeButtonText="@null"
         android:positiveButtonText="@null"
         android:title="@string/pref_difficulty" />

@@ -43,7 +43,9 @@ public class CellAdapter extends BaseAdapter {
 
         view.setLayoutParams(new GridView.LayoutParams(desiredWidth, desiredHeight));
 
-        int color = Color.HSVToColor(new float[]{ position * (360 / totalCells) % 360, 0.8f, 0.8f});
+        //somewhat spread the colors if there's too many cells that would be contiguous to a very similar color
+        int positionOffset = totalCells >= 20 ? 90 * (position % 4) : 0;
+        int color = Color.HSVToColor(new float[]{ (position * (360 / totalCells) + positionOffset) % 360, 0.8f, 0.8f});
         view.setBackgroundColor(color);
 
         return view;
